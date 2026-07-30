@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initReveal();
   initCounters();
   initBackToTop();
+  initInquiryForm();
 });
 
 /* Mobile nav toggle + dropdown accordions */
@@ -129,6 +130,43 @@ function initCounters() {
     { threshold: 0.6 }
   );
   counters.forEach((el) => observer.observe(el));
+}
+
+/* Contact page inquiry form — builds a pre-filled email since the site has no backend */
+function initInquiryForm() {
+  const form = document.getElementById('inquiryForm');
+  const status = document.getElementById('formStatus');
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const firstName = form.firstName.value.trim();
+    const lastName = form.lastName.value.trim();
+    const email = form.email.value.trim();
+    const phone = form.phone.value.trim();
+    const inquiryType = form.inquiryType.value;
+    const message = form.message.value.trim();
+
+    const subject = `${inquiryType} - Who Blinked FTC 30000`;
+    const body =
+      `Name: ${firstName} ${lastName}\n` +
+      `Email: ${email}\n` +
+      `Phone: ${phone || 'N/A'}\n` +
+      `Inquiry Type: ${inquiryType}\n\n` +
+      `Message:\n${message}`;
+
+    const mailto = `mailto:whoblinked30000@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    status.textContent = 'Opening your email app to send this message…';
+    status.className = 'form-status success';
+    window.location.href = mailto;
+  });
 }
 
 /* Back-to-top button */
